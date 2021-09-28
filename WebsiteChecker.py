@@ -1,6 +1,6 @@
 from icmplib import ping,multiping,traceroute,resolve
 
-auswahl = int(input("What you wanna do? \n Check connections (1) \n Delete connections (2) \n Add connections (3)"))
+auswahl = int(input("What you wanna do? \n Check connections (1) \n Delete connections (2) \n Add connections (3) "))
 
 def connections_check():
     
@@ -37,13 +37,14 @@ def connections_delete():
     x = "Y"
 
     with open("hosts.txt", "r") as file:
+        
         for line in file:
             hosts.append(line.strip())
-        
-    print (hosts)
 
             
     while x == "Y":
+
+        print (hosts)
 
         user_eingabe = input(str("Which Site you wanna delete? "))
     
@@ -53,6 +54,7 @@ def connections_delete():
             with open("hosts.txt", "r") as f:
                 lines = f.readlines()
                 del lines[removed_line]
+                hosts.pop(removed_line)
 
             with open("hosts.txt", "w+") as f:
                 for line in lines:
