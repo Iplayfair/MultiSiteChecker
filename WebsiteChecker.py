@@ -36,7 +36,7 @@ if auswahl == 1:
     connections_check()
     
 elif auswahl == 2:
-    connections_delete()
+    connections_delete
 
 else:
     connections_add()
