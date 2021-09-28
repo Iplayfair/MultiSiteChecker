@@ -1,6 +1,6 @@
 from icmplib import ping,multiping,traceroute,resolve
 
-auswahl = int(input("Was wollen sie tun? \n Connections checken (1) \n Connections bearbeiten (2) \n Connections hinzufügen (3)"))
+auswahl = int(input("What you wanna do? \n Check connections (1) \n Delete connections (2) \n Add connections (3)"))
 
 def connections_check():
     
@@ -27,8 +27,41 @@ def connections_add():
 
         while x == "Y":
 
-            file.write(input("Welche Website willst du Checken? " + "\n")+"\n")
-            x = input("Willst du eine weitere Webseite öffnen? (Y/N)")
+            file.write(input("Which Website do you wanna check? " + "\n")+"\n")
+            x = input("Do you wann check another website? (Y/N)")
+
+
+def connections_delete():
+    
+    hosts = []
+    x = "Y"
+
+    with open("hosts.txt", "r") as file:
+        for line in file:
+            hosts.append(line.strip())
+        
+    print (hosts)
+
+            
+    while x == "Y":
+
+        user_eingabe = input(str("Which Site you wanna delete? "))
+    
+        if user_eingabe in hosts:
+            removed_line = hosts.index(user_eingabe)
+
+            with open("hosts.txt", "r") as f:
+                lines = f.readlines()
+                del lines[removed_line]
+
+            with open("hosts.txt", "w+") as f:
+                for line in lines:
+                    f.write(line)
+
+        else: 
+            print ("The site does not exist")
+        
+        x = input(str("Do you wanna delete an another site? (Y/N)"))
 
 
 
