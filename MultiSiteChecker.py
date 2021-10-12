@@ -2,20 +2,24 @@ from icmplib import ping, multiping, traceroute, resolve
 
 
 def connections_check():
+    
+    try:
 
-    hosts = []
+        hosts = []
+        while True:
+            with open("hosts.txt", "r") as file:
+                for line in file:
+                    hosts.append(line.strip())
 
-    with open("hosts.txt", "r") as file:
-        for line in file:
-            hosts.append(line.strip())
+            y = multiping(hosts)
 
-    y = multiping(hosts)
-
-    for host in y:
-        if host.is_alive:
-            print(host.address)
-        elif host.is_alive:
-            print("Host is down")
+            for host in y:
+                if host.is_alive:
+                    print(host.address + " Is alive")
+                else:
+                    print("Host is down")
+    except KeyboardInterrupt:
+        menue()
 
 
 def connections_add():
