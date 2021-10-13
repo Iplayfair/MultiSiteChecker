@@ -76,19 +76,20 @@ from typing import List
 def connections_check():
      
     hosts = []
-    while True:
-        with open("hosts.txt", "r") as file:
-            for line in file:
-                hosts.append(line.strip())
+    
+    with open("hosts.txt", "r") as file:
+        for line in file:
+            hosts.append(line.strip())
 
         y = multiping(hosts)
 
-        for host in y:
-            indx = y.index(host)
-            if host.is_alive:
-                lbox.itemconfig(indx,{'bg':'green'})
-            else:
-                print("Host is down")
+    for host in y:
+        indx = y.index(host)
+        if host.is_alive:
+            lbox.itemconfig(indx,{'bg':'green'})
+        else:
+            print("Host is down")
+    window.after(2000,connections_check)
 
 
 def connections_add():
