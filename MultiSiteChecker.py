@@ -2,7 +2,10 @@ from icmplib import ping, multiping, traceroute, resolve
 import sys
 import tkinter as tk
 from tkinter.constants import LEFT, RIGHT
-from typing import List
+from typing import List, final
+import icmplib
+
+from icmplib.exceptions import NameLookupError
 
 
 def connections_check():
@@ -15,12 +18,17 @@ def connections_check():
 
         y = multiping(hosts)
 
-    for host in y:
-        indx = y.index(host)
-        if host.is_alive:
-            lbox.itemconfig(indx, {'bg': 'green'})
-        else:
-            lbox.itemconfig(indx, {'bg': 'red'})
+    
+
+        for host in y:
+
+            indx = y.index(host)
+            if host.is_alive:
+                lbox.itemconfig(indx, {'bg': 'green'})
+
+            else:
+                lbox.itemconfig(indx, {'bg': 'red'})
+                
 
     window.after(1000, connections_check)
 
@@ -30,6 +38,7 @@ def connections_add():
     with open("hosts.txt", "a") as file:
 
         input = e1.get()
+        e1.delete(0, 'end')
         lbox.insert("end", input)
         file.write(input + "\n")
 
