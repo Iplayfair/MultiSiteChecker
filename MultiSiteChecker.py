@@ -28,9 +28,9 @@ def connections_check():
     with open("hosts.txt", "r") as file:
         for line in file:
             hosts.append(line.strip())
-
+    try:
         y = multiping(hosts)
-
+        
         for host in y:
 
             indx = y.index(host)
@@ -39,7 +39,8 @@ def connections_check():
 
             else:
                 lbox.itemconfig(indx, {'bg': 'red'})
-
+    except NameLookupError:
+        pass
     after_id = window.after(500, connections_check)
 
 
@@ -52,20 +53,30 @@ def connections_add():
             hosts.append(line.strip())
 
     with open("hosts.txt", "a") as file:
+        try:
+            input = e1.get()
+            host = ping(input)
 
-        input = e1.get()
-        if input in hosts:
-            messagebox.showinfo(
-                title=None, message="The Adress " + input + " is already included.")
-            e1.delete(0, 'end')
-        elif input == "":
-            messagebox.showinfo(
-                title=None, message="The Input is Empty please insert an Adress")
-        else:
+            if host.is_alive:
 
-            e1.delete(0, 'end')
-            lbox.insert("end", input)
-            file.write(input + "\n")
+                if input in hosts:
+                    messagebox.showinfo(
+                        title=None, message="The Adress " + input + " is already included.")
+                    e1.delete(0, 'end')
+                elif input == "":
+                    messagebox.showinfo(
+                        title=None, message="The Input is Empty please insert an Adress")
+                else:
+
+                    e1.delete(0, 'end')
+                    lbox.insert("end", input)
+                    file.write(input + "\n")
+            else:
+                messagebox.showinfo(
+                    title=None, message="The Host is no avaible to add it")
+        except NameLookupError:
+            messagebox.showinfo(
+                title=None, message=input + " Cannot be resolved")
 
 
 def connections_delete():
