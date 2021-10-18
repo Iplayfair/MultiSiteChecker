@@ -3,14 +3,26 @@ import sys
 import tkinter as tk
 from tkinter.constants import LEFT, RIGHT, X
 from typing import List, final
-from tkinter import messagebox
+from tkinter import Button, Listbox, messagebox
 import icmplib
 
 from icmplib.exceptions import NameLookupError
 
+after_id = None
+
+
+def switchButtonState():
+    if (b3['state'] == tk.NORMAL):
+        b3['state'] = tk.DISABLED
+    elif(b3['state'] == tk.DISABLED):
+        b3['state'] = tk.NORMAL
+    else:
+        b3['state'] = tk.NORMAL
+
 
 def connections_check():
 
+    global after_id
     hosts = []
 
     with open("hosts.txt", "r") as file:
@@ -28,7 +40,7 @@ def connections_check():
             else:
                 lbox.itemconfig(indx, {'bg': 'red'})
 
-    window.after(500, connections_check)
+    after_id = window.after(500, connections_check)
 
 
 def connections_add():
@@ -47,7 +59,8 @@ def connections_add():
                 title=None, message="The Adress " + input + " is already included.")
             e1.delete(0, 'end')
         elif input == "":
-            messagebox.showinfo(title=None, message="The Input is Empty please insert an Adress")
+            messagebox.showinfo(
+                title=None, message="The Input is Empty please insert an Adress")
         else:
 
             e1.delete(0, 'end')
@@ -71,10 +84,24 @@ def connections_delete():
         for line in lines:
             f.write(line)
 
-def connections_stop():
-    window.after_cancel(connections_check)
 
+def connections_stop():
+    global after_id
+    if after_id is not None:
+        window.after_cancel(after_id)
+        after_id = None
+        lbox.config(background='white')
+
+
+"""     
+    hosts = connections_check() 
+
+    for host in hosts:
+        indx = hosts.index(host)
+        lbox.itemconfig(indx, {'bg': 'white'})
+ """
 # Building GUI
+
 
 window = tk.Tk()
 
@@ -85,8 +112,12 @@ e1.pack()
 
 b1 = tk.Button(text="Add Connection", command=connections_add).pack()
 b2 = tk.Button(text="Delete Connections", command=connections_delete).pack()
-b3 = tk.Button(text="Check Connections", command=connections_check).pack()
-b4 = tk.Button(text="Stop", command=connections_stop).pack()
+b3 = tk.Button(text="Check Connections", command=lambda: [
+               connections_check(), switchButtonState()])
+b3.pack()
+b4 = tk.Button(text="Stop", command=lambda: [
+               connections_stop(), switchButtonState()])
+b4.pack()
 
 # Initial the Connection List
 
