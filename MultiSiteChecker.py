@@ -1,11 +1,11 @@
-from icmplib import ping, multiping, traceroute, resolve
+from icmplib import ping, multiping, traceroute, resolve, async_multiping
 import sys
 import tkinter as tk
-from tkinter.constants import LEFT, RIGHT, X
+from tkinter.constants import END, LEFT, RIGHT, X
 from typing import List, final
 from tkinter import Button, Listbox, messagebox
 import icmplib
-
+import asyncio
 from icmplib.exceptions import NameLookupError
 
 after_id = None
@@ -14,34 +14,44 @@ after_id = None
 def switchButtonState():
     if (b3['state'] == tk.NORMAL):
         b3['state'] = tk.DISABLED
+        b2['state'] = tk.DISABLED
+        b1['state'] = tk.DISABLED
     elif(b3['state'] == tk.DISABLED):
         b3['state'] = tk.NORMAL
+        b2['state'] = tk.NORMAL
+        b1['state'] = tk.NORMAL
     else:
         b3['state'] = tk.NORMAL
 
 
 def connections_check():
-
     global after_id
     hosts = []
-
+    x = -1
     with open("hosts.txt", "r") as file:
         for line in file:
             hosts.append(line.strip())
-    try:
-        y = multiping(hosts)
-        
-        for host in y:
 
-            indx = y.index(host)
-            if host.is_alive:
-                lbox.itemconfig(indx, {'bg': 'green'})
+        for host in hosts:
+
+            try:
+
+                x = x+1
+
+                y = ping(host, count=1)
+            except NameLookupError:
+                lbox.itemconfig(x, {'bg': 'yellow'})
+                continue
+
+            """ indx = hosts.index(host) """
+            if y.is_alive:
+                lbox.itemconfig(x, {'bg': 'green'})
 
             else:
-                lbox.itemconfig(indx, {'bg': 'red'})
-    except NameLookupError:
-        pass
+                lbox.itemconfig(x, {'bg': 'red'})
+
     after_id = window.after(500, connections_check)
+    return hosts
 
 
 def connections_add():
@@ -66,6 +76,7 @@ def connections_add():
                 elif input == "":
                     messagebox.showinfo(
                         title=None, message="The Input is Empty please insert an Adress")
+                    e1.delete(0, 'end')
                 else:
 
                     e1.delete(0, 'end')
@@ -75,8 +86,14 @@ def connections_add():
                 messagebox.showinfo(
                     title=None, message="The Host is no avaible to add it")
         except NameLookupError:
-            messagebox.showinfo(
-                title=None, message=input + " Cannot be resolved")
+            msgbox = messagebox.askquestion(
+                title=None, message=input + " Cannot be resolved do you wanna still add it?")
+            if msgbox == "yes":
+                e1.delete(0, 'end')
+                lbox.insert("end", input)
+                file.write(input + "\n")
+            else:
+                e1.delete(0, 'end')
 
 
 def connections_delete():
@@ -96,21 +113,15 @@ def connections_delete():
             f.write(line)
 
 
-def connections_stop():
+def connections_stop(hosts):
     global after_id
     if after_id is not None:
         window.after_cancel(after_id)
         after_id = None
-        lbox.config(background='white')
-
-
-"""     
-    hosts = connections_check() 
 
     for host in hosts:
         indx = hosts.index(host)
         lbox.itemconfig(indx, {'bg': 'white'})
- """
 # Building GUI
 
 
@@ -121,13 +132,15 @@ l1 = tk.Label(text="Address:").pack()
 e1 = tk.Entry(window)
 e1.pack()
 
-b1 = tk.Button(text="Add Connection", command=connections_add).pack()
-b2 = tk.Button(text="Delete Connections", command=connections_delete).pack()
+b1 = tk.Button(text="Add Connection", command=connections_add)
+b1.pack()
+b2 = tk.Button(text="Delete Connections", command=connections_delete)
+b2.pack()
 b3 = tk.Button(text="Check Connections", command=lambda: [
                connections_check(), switchButtonState()])
 b3.pack()
 b4 = tk.Button(text="Stop", command=lambda: [
-               connections_stop(), switchButtonState()])
+               connections_stop(hosts), switchButtonState()])
 b4.pack()
 
 # Initial the Connection List
