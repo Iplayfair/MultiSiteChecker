@@ -28,7 +28,7 @@ def connections_check():
     global after_id
     hosts = []
     x = -1
-    with open("hosts.txt", "r") as file:
+    with open("asset/txtData/hosts.txt", "r") as file:
         for line in file:
             hosts.append(line.strip())
 
@@ -58,11 +58,11 @@ def connections_add():
 
     hosts = []
 
-    with open("hosts.txt", "r") as file:
+    with open("asset/txtData/hosts.txt", "r") as file:
         for line in file:
             hosts.append(line.strip())
 
-    with open("hosts.txt", "a") as file:
+    with open("asset/txtData/hosts.txt", "a") as file:
         try:
             input = e1.get()
             host = ping(input)
@@ -103,12 +103,12 @@ def connections_delete():
 
     lbox.delete(index)
 
-    with open("hosts.txt", "r") as f:
+    with open("asset/txtData/hosts.txt", "r") as f:
         lines = f.readlines()
         del lines[index]
         hosts.pop(index)
 
-    with open("hosts.txt", "w+") as f:
+    with open("asset/txtData/hosts.txt", "w+") as f:
         for line in lines:
             f.write(line)
 
@@ -147,7 +147,7 @@ b4.pack()
 
 hosts = []
 
-with open("hosts.txt", "r") as file:
+with open("asset/txtData/hosts.txt", "r") as file:
     for line in file:
         hosts.append(line.strip())
 
