@@ -1,0 +1,1 @@
+int(dic2["varfacebook.com"].get())

@@ -1,3 +1,4 @@
+from email.mime import text
 from icmplib import ping, multiping, traceroute, resolve, async_multiping
 import sys
 import tkinter as tk
@@ -80,7 +81,11 @@ def connections_add():
                         title=None, message="The Input is Empty please insert an Adress")
                     e1.delete(0, 'end')
                 else:
-
+                    key = "c" + input
+                    v = "var"+input
+                    dic2[v] = tk.IntVar()
+                    dic[key] = tk.Checkbutton(
+                        window, variable=dic2["var"+input], onvalue=1, offvalue=0).pack()
                     e1.delete(0, 'end')
                     lbox.insert("end", input)
                     file.write(input + "\n")
@@ -91,6 +96,11 @@ def connections_add():
             msgbox = messagebox.askquestion(
                 title=None, message=input + " Cannot be resolved do you wanna still add it?")
             if msgbox == "yes":
+                key = "c" + input
+                v = "var"+input
+                dic2[v] = tk.IntVar()
+                dic[key] = tk.Checkbutton(
+                    window, variable=dic2["var"+input], onvalue=1, offvalue=0).pack()
                 e1.delete(0, 'end')
                 lbox.insert("end", input)
                 file.write(input + "\n")
@@ -125,6 +135,13 @@ def connections_stop(hosts):
     for host in hosts:
         indx = hosts.index(host)
         lbox.itemconfig(indx, {'bg': 'white'})
+
+
+def print_selection():
+    if dic2["varfacebook.com"].get() == 0:
+        print("Top")
+
+
 # Building GUI
 
 
@@ -139,6 +156,12 @@ def init():
 
 
 window = tk.Tk()
+
+dic = {}
+dic2 = {}
+key = ""
+v = ""
+
 
 l1 = tk.Label(text="Address:").pack()
 
@@ -156,11 +179,18 @@ b4 = tk.Button(text="Stop", command=lambda: [
                connections_stop(hosts), switchButtonState()])
 b4.pack()
 
+
 lbox = tk.Listbox(window)
 lbox.pack()
 hosts = init()
 for i in hosts:
+    key = "c" + i
+    v = "var"+i
+    dic2[v] = tk.IntVar()
+    dic[key] = tk.Checkbutton(window, variable=dic2["var"+i]).pack()
     lbox.insert("end", i)
+
+
 
 
 def main():

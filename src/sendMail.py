@@ -14,7 +14,7 @@ import config
 
 
 
-def sendEmail(tempFile2, free, usedInPercent, alive, hostname, localIP):
+def sendMail(tempFile2, free, usedInPercent, alive, hostname, localIP):
     # Configure SMTP-Server
 
     smtp = smtplib.SMTP(host='smtp.office365.com', port='587')
@@ -39,3 +39,4 @@ def sendEmail(tempFile2, free, usedInPercent, alive, hostname, localIP):
     smtp.send_message(msg)
 
     del msg
+
