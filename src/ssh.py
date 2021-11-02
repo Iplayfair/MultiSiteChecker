@@ -15,6 +15,8 @@ hostname = socket.gethostname()
 localIP = socket.gethostbyname(hostname)
 
 
+
+
 def main():
     counter = 0
     counterPing = 0
@@ -39,7 +41,7 @@ def main():
             with open("asset/txtData/message.txt", "r") as tempFile:
                 tempFile1 = tempFile.read()
             tempFile2 = Template(tempFile1)
-            sendEmail(tempFile2, free, usedInPercent,alive)
+            sendEmail(tempFile2, free, usedInPercent, alive)
             counter = counter+1
 
         elif usedInPercent < 59 and counter == 1:

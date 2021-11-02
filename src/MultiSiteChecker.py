@@ -6,6 +6,8 @@ from typing import List, final
 from tkinter import Button, Listbox, messagebox
 import icmplib
 import asyncio
+import sendMail
+import ssh
 from icmplib.exceptions import NameLookupError
 
 after_id = None
@@ -50,7 +52,7 @@ def connections_check():
             else:
                 lbox.itemconfig(x, {'bg': 'red'})
 
-    after_id = window.after(500, connections_check)
+    after_id = window.after(10000, connections_check)
     return hosts
 
 
@@ -115,6 +117,7 @@ def connections_delete():
 
 def connections_stop(hosts):
     global after_id
+    hosts = init()
     if after_id is not None:
         window.after_cancel(after_id)
         after_id = None
@@ -123,6 +126,16 @@ def connections_stop(hosts):
         indx = hosts.index(host)
         lbox.itemconfig(indx, {'bg': 'white'})
 # Building GUI
+
+
+def init():
+    hosts = []
+
+    with open("asset/txtData/hosts.txt", "r") as file:
+        for line in file:
+            hosts.append(line.strip())
+
+    return hosts
 
 
 window = tk.Tk()
@@ -143,19 +156,17 @@ b4 = tk.Button(text="Stop", command=lambda: [
                connections_stop(hosts), switchButtonState()])
 b4.pack()
 
-# Initial the Connection List
-
-hosts = []
-
-with open("asset/txtData/hosts.txt", "r") as file:
-    for line in file:
-        hosts.append(line.strip())
-
 lbox = tk.Listbox(window)
 lbox.pack()
-
+hosts = init()
 for i in hosts:
     lbox.insert("end", i)
 
 
-window.mainloop()
+def main():
+
+    window.mainloop()
+
+
+if __name__ == '__main__':
+    main()
