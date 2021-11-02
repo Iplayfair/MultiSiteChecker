@@ -1,2 +1,2 @@
-Der ${SERVER_NAME} (${IP_ADRESS}) ist nicht mehr erreichbar!
+${IP_ADRESS} is no longer available
 

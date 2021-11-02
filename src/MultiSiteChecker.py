@@ -3,13 +3,21 @@ from icmplib import ping, multiping, traceroute, resolve, async_multiping
 import sys
 import tkinter as tk
 from tkinter.constants import END, LEFT, RIGHT, X
-from typing import List, final
+from typing import Counter, List, final
 from tkinter import Button, Listbox, messagebox
 import icmplib
 import asyncio
 import sendMail
-import ssh
 from icmplib.exceptions import NameLookupError
+from email import message
+from icmplib import ping
+from icmplib.exceptions import NameLookupError
+from email.message import EmailMessage
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from string import Template
+import config
+import smtplib
 
 after_id = None
 
@@ -44,6 +52,7 @@ def connections_check():
                 y = ping(host, count=1)
             except NameLookupError:
                 lbox.itemconfig(x, {'bg': 'yellow'})
+                checkChecked(host)
                 continue
 
             """ indx = hosts.index(host) """
@@ -52,6 +61,7 @@ def connections_check():
 
             else:
                 lbox.itemconfig(x, {'bg': 'red'})
+                checkChecked(host)
 
     after_id = window.after(10000, connections_check)
     return hosts
@@ -137,10 +147,37 @@ def connections_stop(hosts):
         lbox.itemconfig(indx, {'bg': 'white'})
 
 
-def print_selection():
-    if dic2["varfacebook.com"].get() == 0:
-        print("Top")
+def checkChecked(address):
 
+    counter = 0
+
+    if dic2["var" + address].get() == 1 and counter == 0:
+        with open("asset/txtData/messageNoPing.txt", "r") as tempFile:
+            tempFile1 = tempFile.read()
+        tempFile2 = Template(tempFile1)
+        sendEMail(tempFile2, address)
+        counter = counter + 1
+    elif dic2["var"+address].get() == 1 and counter == 1:
+        counter = counter - 1
+    else:
+        pass
+
+
+def sendEMail(text, address):
+    smtp = smtplib.SMTP(host='smtp.office365.com', port='587')
+    smtp.starttls()
+    smtp.login(config.login, config.password)
+
+    message = text.substitute(IP_ADRESS=address)
+
+    msg = MIMEMultipart()
+    msg['FROM'] = config.From
+    msg['TO'] = config.To
+    msg['Subject'] = "Warning!"
+
+    msg.attach(MIMEText(message, 'plain'))
+
+    smtp.send_message(msg)
 
 # Building GUI
 
@@ -189,8 +226,6 @@ for i in hosts:
     dic2[v] = tk.IntVar()
     dic[key] = tk.Checkbutton(window, variable=dic2["var"+i]).pack()
     lbox.insert("end", i)
-
-
 
 
 def main():
