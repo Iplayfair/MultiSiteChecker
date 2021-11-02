@@ -1,13 +1,9 @@
 from email.mime import text
 from icmplib import ping, multiping, traceroute, resolve, async_multiping
-import sys
 import tkinter as tk
 from tkinter.constants import END, LEFT, RIGHT, X
 from typing import Counter, List, final
 from tkinter import Button, Listbox, messagebox
-import icmplib
-import asyncio
-import sendMail
 from icmplib.exceptions import NameLookupError
 from email import message
 from icmplib import ping
@@ -20,7 +16,7 @@ import config
 import smtplib
 
 after_id = None
-
+counter = 0
 
 def switchButtonState():
     if (b3['state'] == tk.NORMAL):
@@ -148,16 +144,14 @@ def connections_stop(hosts):
 
 
 def checkChecked(address):
-
-    counter = 0
-
+    global counter
     if dic2["var" + address].get() == 1 and counter == 0:
         with open("asset/txtData/messageNoPing.txt", "r") as tempFile:
             tempFile1 = tempFile.read()
         tempFile2 = Template(tempFile1)
         sendEMail(tempFile2, address)
         counter = counter + 1
-    elif dic2["var"+address].get() == 1 and counter == 1:
+    elif dic2["var"+address].get() == 0 and counter == 1:
         counter = counter - 1
     else:
         pass
