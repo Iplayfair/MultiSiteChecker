@@ -1,9 +1,10 @@
 from email.mime import text
+from re import T
 from icmplib import ping, multiping, traceroute, resolve, async_multiping
 import tkinter as tk
-from tkinter.constants import END, LEFT, RIGHT, X
+from tkinter.constants import BOTTOM, END, LEFT, RIGHT, TOP, X
 from typing import Counter, List, final
-from tkinter import Button, Listbox, messagebox
+from tkinter import Button, Frame, Listbox, messagebox
 from icmplib.exceptions import NameLookupError
 from email import message
 from icmplib import ping
@@ -17,6 +18,10 @@ import smtplib
 
 after_id = None
 counter = 0
+dic = {}
+dic2 = {}
+key = ""
+v = ""
 
 def switchButtonState():
     if (b3['state'] == tk.NORMAL):
@@ -187,38 +192,36 @@ def init():
 
 
 window = tk.Tk()
+top = Frame(window)
+top.pack(side=TOP)
+bottom = Frame(window)
+bottom.pack(side=BOTTOM)
 
-dic = {}
-dic2 = {}
-key = ""
-v = ""
-
-
-l1 = tk.Label(text="Address:").pack()
+l1 = tk.Label(window,text="Address:").pack(in_=top,side=TOP)
 
 e1 = tk.Entry(window)
-e1.pack()
+e1.pack(in_=top,side = TOP)
 
-b1 = tk.Button(text="Add Connection", command=connections_add)
-b1.pack()
-b2 = tk.Button(text="Delete Connections", command=connections_delete)
-b2.pack()
-b3 = tk.Button(text="Check Connections", command=lambda: [
+b1 = tk.Button(window,text="Add Connection", command=connections_add)
+b1.pack(in_=top,side=TOP)
+b2 = tk.Button(window,text="Delete Connections", command=connections_delete)
+b2.pack(in_=top,side=TOP)
+b3 = tk.Button(window,text="Check Connections", command=lambda: [
                connections_check(), switchButtonState()])
-b3.pack()
-b4 = tk.Button(text="Stop", command=lambda: [
+b3.pack(in_=top,side=TOP)
+b4 = tk.Button(window,text="Stop", command=lambda: [
                connections_stop(hosts), switchButtonState()])
-b4.pack()
+b4.pack(in_=top,side=TOP)
 
 
 lbox = tk.Listbox(window)
-lbox.pack()
+lbox.pack(in_= bottom,side=LEFT)
 hosts = init()
 for i in hosts:
     key = "c" + i
     v = "var"+i
     dic2[v] = tk.IntVar()
-    dic[key] = tk.Checkbutton(window, variable=dic2["var"+i]).pack()
+    dic[key] = tk.Checkbutton(window, variable=dic2["var"+i]).pack(in_=bottom,side=TOP)
     lbox.insert("end", i)
 
 
