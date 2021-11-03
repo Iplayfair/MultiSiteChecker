@@ -4,7 +4,7 @@ from icmplib import ping, multiping, traceroute, resolve, async_multiping
 import tkinter as tk
 from tkinter.constants import BOTTOM, END, LEFT, RIGHT, TOP, X
 from typing import Counter, List, final
-from tkinter import Button, Frame, Listbox, messagebox
+from tkinter import Button, Frame, Image, Listbox, messagebox
 from icmplib.exceptions import NameLookupError
 from email import message
 from icmplib import ping
@@ -15,6 +15,7 @@ from email.mime.text import MIMEText
 from string import Template
 import config
 import smtplib
+import database
 
 after_id = None
 counter = 0
@@ -22,6 +23,9 @@ dic = {}
 dic2 = {}
 key = ""
 v = ""
+
+#If pressed CheckConnection turn of all Buttons except the Stop Button
+#If pressed Stop Button turn on all Buttons agian
 
 def switchButtonState():
     if (b3['state'] == tk.NORMAL):
@@ -35,6 +39,7 @@ def switchButtonState():
     else:
         b3['state'] = tk.NORMAL
 
+#Check Connection if it is Avaible and if not send Email to Checked Checkbox Connections
 
 def connections_check():
     global after_id
@@ -67,6 +72,7 @@ def connections_check():
     after_id = window.after(10000, connections_check)
     return hosts
 
+#Check Connection before Adding and Add Connection in List and Array
 
 def connections_add():
 
@@ -118,6 +124,7 @@ def connections_add():
             else:
                 e1.delete(0, 'end')
 
+#Delete the Connection from List and Array
 
 def connections_delete():
 
@@ -135,6 +142,7 @@ def connections_delete():
         for line in lines:
             f.write(line)
 
+#Stop Checking of Connections and make the List Background White
 
 def connections_stop(hosts):
     global after_id
@@ -147,6 +155,7 @@ def connections_stop(hosts):
         indx = hosts.index(host)
         lbox.itemconfig(indx, {'bg': 'white'})
 
+#Checking if the Checkbox is Checked and Send Mail
 
 def checkChecked(address):
     global counter
@@ -163,9 +172,9 @@ def checkChecked(address):
 
 
 def sendEMail(text, address):
-    smtp = smtplib.SMTP(host='smtp.office365.com', port='587')
+    smtp = smtplib.SMTP(host='smtp.office365.com', port='587')      #Configure Office365 SMTP Server
     smtp.starttls()
-    smtp.login(config.login, config.password)
+    smtp.login(config.login, config.password)    #Login Credantials
 
     message = text.substitute(IP_ADRESS=address)
 
@@ -178,7 +187,7 @@ def sendEMail(text, address):
 
     smtp.send_message(msg)
 
-# Building GUI
+# Init Host Document
 
 
 def init():
@@ -191,37 +200,46 @@ def init():
     return hosts
 
 
+# Building Structure
 window = tk.Tk()
+window.iconbitmap('asset/Pictures/Network.ico')
+window.title("NetworkChecker")
 top = Frame(window)
 top.pack(side=TOP)
 bottom = Frame(window)
 bottom.pack(side=BOTTOM)
 
-l1 = tk.Label(window,text="Address:").pack(in_=top,side=TOP)
+
+# Set Labels, Button and List
+l1 = tk.Label(window, text="Address:").pack(in_=top, side=TOP)
 
 e1 = tk.Entry(window)
-e1.pack(in_=top,side = TOP)
+e1.pack(in_=top, side=TOP)
 
-b1 = tk.Button(window,text="Add Connection", command=connections_add)
-b1.pack(in_=top,side=TOP)
-b2 = tk.Button(window,text="Delete Connections", command=connections_delete)
-b2.pack(in_=top,side=TOP)
-b3 = tk.Button(window,text="Check Connections", command=lambda: [
+b1 = tk.Button(window, text="Add Connection", command=connections_add)
+b1.pack(in_=top, side=TOP)
+b2 = tk.Button(window, text="Delete Connections", command=connections_delete)
+b2.pack(in_=top, side=TOP)
+b3 = tk.Button(window, text="Check Connections", command=lambda: [
                connections_check(), switchButtonState()])
-b3.pack(in_=top,side=TOP)
-b4 = tk.Button(window,text="Stop", command=lambda: [
+b3.pack(in_=top, side=TOP)
+b4 = tk.Button(window, text="Stop", command=lambda: [
                connections_stop(hosts), switchButtonState()])
-b4.pack(in_=top,side=TOP)
+b4.pack(in_=top, side=TOP)
 
 
 lbox = tk.Listbox(window)
-lbox.pack(in_= bottom,side=LEFT)
+lbox.pack(in_=bottom, side=LEFT)
 hosts = init()
+
+# Set List Elements and Button Elements
+
 for i in hosts:
     key = "c" + i
     v = "var"+i
     dic2[v] = tk.IntVar()
-    dic[key] = tk.Checkbutton(window, variable=dic2["var"+i]).pack(in_=bottom,side=TOP)
+    dic[key] = tk.Checkbutton(window, variable=dic2["var"+i]
+                              ).pack(in_=bottom, side=TOP)
     lbox.insert("end", i)
 
 
