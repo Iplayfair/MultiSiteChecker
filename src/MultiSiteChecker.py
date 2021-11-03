@@ -1,10 +1,13 @@
+import email
 from email.mime import text
+from os import name
 from re import T
+from tkinter.font import nametofont
 from icmplib import ping, multiping, traceroute, resolve, async_multiping
 import tkinter as tk
 from tkinter.constants import BOTTOM, END, LEFT, RIGHT, TOP, X
 from typing import Counter, List, final
-from tkinter import Button, Frame, Image, Listbox, messagebox
+from tkinter import Button, Entry, Frame, Image, Label, Listbox, Toplevel, messagebox
 from icmplib.exceptions import NameLookupError
 from email import message
 from icmplib import ping
@@ -15,7 +18,7 @@ from email.mime.text import MIMEText
 from string import Template
 import config
 import smtplib
-import database
+from database import networkcheckDB as db
 
 after_id = None
 counter = 0
@@ -24,8 +27,9 @@ dic2 = {}
 key = ""
 v = ""
 
-#If pressed CheckConnection turn of all Buttons except the Stop Button
-#If pressed Stop Button turn on all Buttons agian
+# If pressed CheckConnection turn of all Buttons except the Stop Button
+# If pressed Stop Button turn on all Buttons agian
+
 
 def switchButtonState():
     if (b3['state'] == tk.NORMAL):
@@ -39,7 +43,8 @@ def switchButtonState():
     else:
         b3['state'] = tk.NORMAL
 
-#Check Connection if it is Avaible and if not send Email to Checked Checkbox Connections
+# Check Connection if it is Avaible and if not send Email to Checked Checkbox Connections
+
 
 def connections_check():
     global after_id
@@ -72,7 +77,8 @@ def connections_check():
     after_id = window.after(10000, connections_check)
     return hosts
 
-#Check Connection before Adding and Add Connection in List and Array
+# Check Connection before Adding and Add Connection in List and Array
+
 
 def connections_add():
 
@@ -124,7 +130,8 @@ def connections_add():
             else:
                 e1.delete(0, 'end')
 
-#Delete the Connection from List and Array
+# Delete the Connection from List and Array
+
 
 def connections_delete():
 
@@ -142,7 +149,8 @@ def connections_delete():
         for line in lines:
             f.write(line)
 
-#Stop Checking of Connections and make the List Background White
+# Stop Checking of Connections and make the List Background White
+
 
 def connections_stop(hosts):
     global after_id
@@ -155,7 +163,8 @@ def connections_stop(hosts):
         indx = hosts.index(host)
         lbox.itemconfig(indx, {'bg': 'white'})
 
-#Checking if the Checkbox is Checked and Send Mail
+# Checking if the Checkbox is Checked and Send Mail
+
 
 def checkChecked(address):
     global counter
@@ -172,9 +181,10 @@ def checkChecked(address):
 
 
 def sendEMail(text, address):
-    smtp = smtplib.SMTP(host='smtp.office365.com', port='587')      #Configure Office365 SMTP Server
+    # Configure Office365 SMTP Server
+    smtp = smtplib.SMTP(host='smtp.office365.com', port='587')
     smtp.starttls()
-    smtp.login(config.login, config.password)    #Login Credantials
+    smtp.login(config.login, config.password)  # Login Credantials
 
     message = text.substitute(IP_ADRESS=address)
 
@@ -186,6 +196,33 @@ def sendEMail(text, address):
     msg.attach(MIMEText(message, 'plain'))
 
     smtp.send_message(msg)
+
+
+def setEmailData():
+    email = te.get()
+    name = te2.get()
+
+    db.InsertData(name,email,1)
+    
+
+
+def loginWindow():
+    global te, te2
+    topWindow = Toplevel()
+    topWindow.title("Email")
+    topWindow.iconbitmap('asset/Pictures/Network.ico')
+    bottom = Frame(topWindow)
+    bottom.pack(side=BOTTOM)
+    tl = Label(topWindow, text="E-Mail Address: ").pack(padx=5, pady=5)
+    te = Entry(topWindow)
+    te.pack()
+    tl2 = Label(topWindow, text="Name: ").pack(padx=5, pady=5)
+    te2 = Entry(topWindow)
+    te2.pack()
+    tb2 = Button(topWindow, text="Cancel", command=topWindow.destroy).pack(
+        in_=bottom, side=LEFT, padx=5, pady=5)
+    tb = Button(topWindow, text="Set E-Mail",
+                command=setEmailData).pack(in_=bottom, side=LEFT, padx=5, pady=5)
 
 # Init Host Document
 
@@ -211,22 +248,23 @@ bottom.pack(side=BOTTOM)
 
 
 # Set Labels, Button and List
-l1 = tk.Label(window, text="Address:").pack(in_=top, side=TOP)
+l1 = tk.Label(window, text="Address:").pack(in_=top, side=TOP, padx=5, pady=5)
 
 e1 = tk.Entry(window)
-e1.pack(in_=top, side=TOP)
+e1.pack(in_=top, side=TOP, padx=5, pady=5)
 
 b1 = tk.Button(window, text="Add Connection", command=connections_add)
-b1.pack(in_=top, side=TOP)
+b1.pack(in_=top, side=TOP, padx=5, pady=5)
 b2 = tk.Button(window, text="Delete Connections", command=connections_delete)
-b2.pack(in_=top, side=TOP)
+b2.pack(in_=top, side=TOP, padx=5, pady=5)
 b3 = tk.Button(window, text="Check Connections", command=lambda: [
                connections_check(), switchButtonState()])
-b3.pack(in_=top, side=TOP)
+b3.pack(in_=top, side=TOP, padx=5, pady=5)
 b4 = tk.Button(window, text="Stop", command=lambda: [
                connections_stop(hosts), switchButtonState()])
-b4.pack(in_=top, side=TOP)
-
+b4.pack(in_=top, side=TOP, padx=5, pady=5)
+b5 = tk.Button(window, text="Set Email", command=loginWindow())
+b5.pack(in_=bottom, side=BOTTOM, padx=5, pady=5)
 
 lbox = tk.Listbox(window)
 lbox.pack(in_=bottom, side=LEFT)
