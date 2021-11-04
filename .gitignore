@@ -5,6 +5,7 @@ __pycache__/
 #Python Data
 config.py
 MultiSiteChecker_Backup.py
+__init__.py
 
 # C extensions
 *.so
