@@ -12,22 +12,13 @@ import time
 import config
 
 
-
-
-def sendMail(tempFile2, free, usedInPercent, alive, hostname, localIP):
-    # Configure SMTP-Server
-
+def sendEMail(text, address):
+    # Configure Office365 SMTP Server
     smtp = smtplib.SMTP(host='smtp.office365.com', port='587')
     smtp.starttls()
-    smtp.login(config.login, config.password)
-# Send E-Mail
-    if alive == False:
-        message = tempFile2.substitute(SERVER_NAME=hostname, IP_ADRESS=localIP)
+    smtp.login(config.login, config.password)  # Login Credantials
 
-    else:
-
-        message = tempFile2.substitute(
-            SERVER_NAME=hostname, LEFT=free, PERCENT=usedInPercent, IP_ADRESS=localIP)
+    message = text.substitute(IP_ADRESS=address)
 
     msg = MIMEMultipart()
     msg['FROM'] = config.From
@@ -37,6 +28,3 @@ def sendMail(tempFile2, free, usedInPercent, alive, hostname, localIP):
     msg.attach(MIMEText(message, 'plain'))
 
     smtp.send_message(msg)
-
-    del msg
-

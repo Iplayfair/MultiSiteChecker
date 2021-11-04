@@ -19,6 +19,7 @@ from string import Template
 import config
 import smtplib
 from database import networkcheckDB as db
+import sendMail
 
 after_id = None
 counter = 0
@@ -172,7 +173,7 @@ def checkChecked(address):
         with open("asset/txtData/messageNoPing.txt", "r") as tempFile:
             tempFile1 = tempFile.read()
         tempFile2 = Template(tempFile1)
-        sendEMail(tempFile2, address)
+        sendMail.sendEMail(tempFile2, address)
         counter = counter + 1
     elif dic2["var"+address].get() == 0 and counter == 1:
         counter = counter - 1
@@ -180,30 +181,11 @@ def checkChecked(address):
         pass
 
 
-def sendEMail(text, address):
-    # Configure Office365 SMTP Server
-    smtp = smtplib.SMTP(host='smtp.office365.com', port='587')
-    smtp.starttls()
-    smtp.login(config.login, config.password)  # Login Credantials
-
-    message = text.substitute(IP_ADRESS=address)
-
-    msg = MIMEMultipart()
-    msg['FROM'] = config.From
-    msg['TO'] = config.To
-    msg['Subject'] = "Warning!"
-
-    msg.attach(MIMEText(message, 'plain'))
-
-    smtp.send_message(msg)
-
-
 def setEmailData():
     email = te.get()
     name = te2.get()
 
-    db.InsertData(name,email,1)
-    
+    db.InsertData(name, email, 1)
 
 
 def loginWindow():
@@ -222,7 +204,7 @@ def loginWindow():
     tb2 = Button(topWindow, text="Cancel", command=topWindow.destroy).pack(
         in_=bottom, side=LEFT, padx=5, pady=5)
     tb = Button(topWindow, text="Set E-Mail",
-                command=setEmailData).pack(in_=bottom, side=LEFT, padx=5, pady=5)
+                command=lambda: [setEmailData(), topWindow.destroy()]).pack(in_=bottom, side=LEFT, padx=5, pady=5)
 
 # Init Host Document
 
