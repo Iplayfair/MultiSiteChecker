@@ -190,7 +190,7 @@ def setEmailData():
 
 def loginWindow():
     global te, te2
-    topWindow = Toplevel()
+    topWindow = Toplevel(window)
     topWindow.title("Email")
     topWindow.iconbitmap('asset/Pictures/Network.ico')
     bottom = Frame(topWindow)
@@ -204,8 +204,12 @@ def loginWindow():
     tb2 = Button(topWindow, text="Cancel", command=topWindow.destroy).pack(
         in_=bottom, side=LEFT, padx=5, pady=5)
     tb = Button(topWindow, text="Set E-Mail",
-                command=lambda: [setEmailData(), topWindow.destroy()]).pack(in_=bottom, side=LEFT, padx=5, pady=5)
+                command=lambda: [setEmailData(), topWindow.destroy]).pack(in_=bottom, side=LEFT, padx=5, pady=5)
 
+
+def snmp_window(dummy):
+    snmpWindow = Toplevel(window)
+    snmpWindow.title("Monitoring")
 # Init Host Document
 
 
@@ -249,6 +253,7 @@ b5 = tk.Button(window, text="Set Email", command=loginWindow())
 b5.pack(in_=bottom, side=BOTTOM, padx=5, pady=5)
 
 lbox = tk.Listbox(window)
+lbox.bind("<Double-Button-1>", snmp_window)
 lbox.pack(in_=bottom, side=LEFT)
 hosts = init()
 
@@ -265,7 +270,7 @@ for i in hosts:
 
 def main():
 
-    window.mainloop()
+   window.mainloop()
 
 
 if __name__ == '__main__':
