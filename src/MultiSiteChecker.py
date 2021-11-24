@@ -1,11 +1,11 @@
 import email
 from email.mime import text
-from os import name
+from os import access, name
 from re import T
 from tkinter.font import nametofont
 from icmplib import ping, multiping, traceroute, resolve, async_multiping
 import tkinter as tk
-from tkinter.constants import BOTTOM, END, LEFT, RIGHT, TOP, X
+from tkinter.constants import ACTIVE, BOTTOM, END, LEFT, RIGHT, TOP, X
 from typing import Counter, List, final
 from tkinter import Button, Entry, Frame, Image, Label, Listbox, Toplevel, messagebox
 from icmplib.exceptions import NameLookupError
@@ -20,6 +20,7 @@ import config
 import smtplib
 from database import networkcheckDB as db
 import sendMail
+import snmp
 
 after_id = None
 counter = 0
@@ -82,6 +83,8 @@ def connections_check():
 
 
 def connections_add():
+
+
 
     hosts = []
 
@@ -207,9 +210,10 @@ def loginWindow():
                 command=lambda: [setEmailData(), topWindow.destroy]).pack(in_=bottom, side=LEFT, padx=5, pady=5)
 
 
-def snmp_window(dummy):
+def snmp_window(server):
     snmpWindow = Toplevel(window)
     snmpWindow.title("Monitoring")
+    snmpL = Label(snmpWindow, text=server).pack()
 # Init Host Document
 
 
@@ -249,11 +253,12 @@ b3.pack(in_=top, side=TOP, padx=5, pady=5)
 b4 = tk.Button(window, text="Stop", command=lambda: [
                connections_stop(hosts), switchButtonState()])
 b4.pack(in_=top, side=TOP, padx=5, pady=5)
-b5 = tk.Button(window, text="Set Email", command=loginWindow())
+b5 = tk.Button(window, text="Set Email", command=loginWindow)
 b5.pack(in_=bottom, side=BOTTOM, padx=5, pady=5)
 
 lbox = tk.Listbox(window)
-lbox.bind("<Double-Button-1>", snmp_window)
+server = lbox.get(ACTIVE)
+lbox.bind("<Double-Button-1>", snmp_window(server))
 lbox.pack(in_=bottom, side=LEFT)
 hosts = init()
 
@@ -270,7 +275,7 @@ for i in hosts:
 
 def main():
 
-   window.mainloop()
+    window.mainloop()
 
 
 if __name__ == '__main__':

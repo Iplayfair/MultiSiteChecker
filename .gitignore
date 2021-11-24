@@ -4,7 +4,6 @@ __pycache__/
 *$py.class
 #Python Data
 config.py
-MultiSiteChecker_Backup.py
 __init__.py
 
 # C extensions

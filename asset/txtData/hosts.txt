@@ -1,5 +1,5 @@
-1.1.1.1
 8.8.8.8
 facebook.com
 google.com
 172.17.11.94
+youtube.com
