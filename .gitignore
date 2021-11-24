@@ -5,6 +5,8 @@ __pycache__/
 #Python Data
 config.py
 __init__.py
+ssh.py
+MultiSiteChecker.py
 
 # C extensions
 *.so

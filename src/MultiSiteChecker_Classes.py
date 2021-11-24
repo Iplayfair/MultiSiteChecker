@@ -3,7 +3,7 @@ from email.mime import text
 from tkinter.font import nametofont
 from icmplib import ping, multiping, traceroute, resolve, async_multiping
 import tkinter as tk
-from tkinter.constants import ACTIVE, BOTTOM, DISABLED, END, LEFT, RIGHT, TOP, X
+from tkinter.constants import ACTIVE, ANCHOR, BOTTOM, DISABLED, END, LEFT, RIGHT, TOP, X
 from typing import Counter, List, final
 from tkinter import Button, Entry, Frame, Image, Label, Listbox, Toplevel, messagebox
 from icmplib.exceptions import NameLookupError
@@ -16,6 +16,7 @@ from email.mime.text import MIMEText
 from string import Template
 from database import networkcheckDB as db
 import sendMail
+from snmp import snmp
 
 
 class MainWindow:
@@ -60,8 +61,8 @@ class MainWindow:
         self.b5.pack(in_=self.bottom, side=BOTTOM, padx=5, pady=5)
 
         self.lbox = tk.Listbox(window)
-        self.server = self.lbox.get(ACTIVE)
-        self.lbox.bind("<Double-Button-1>", self.snmp_window)
+
+        self.lbox.bind("<Double-Button-1>", lambda x: self.snmp_window())
         self.lbox.pack(in_=self.bottom, side=LEFT)
         self.hosts = self.init()
 
@@ -76,8 +77,12 @@ class MainWindow:
         self.frame.pack()
 
     def snmp_window(self):
+        self.bindex = self.lbox.curselection()
+        index = sum(self.bindex)
+        server = self.lbox.get(index)
+
         self.snmpWindow = tk.Toplevel(self.window)
-        self.app = SnmpWindow(self.snmpWindow)
+        self.app = SnmpWindow(self.snmpWindow, server)
 
     def login_window(self):
         self.loginWindow = tk.Toplevel(self.window)
@@ -271,10 +276,14 @@ class LoginWindow(MainWindow):
 
 class SnmpWindow(MainWindow):
 
-    def __init__(self, snmpWindow):
+    def __init__(self, snmpWindow, server):
         self.snmpWindow = snmpWindow
-        self.snmpL = Label(snmpWindow, text=self.server)
-        self.snmpL.pack()
+        snmpWindow.title(server)
+        snmpWindow.iconbitmap('asset/Pictures/Network.ico')
+        self.snmpL1 = Label(snmpWindow, text=str(snmp.getComputerName(server)))
+        self.snmpL1.pack()
+        self.snmpL2 = Label(snmpWindow, text=str(snmp.getComputerRam(server)))
+        self.snmpL2.pack()
         self.frame = tk.Frame(self.snmpWindow)
 
 
