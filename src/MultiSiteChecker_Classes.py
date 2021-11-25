@@ -3,7 +3,7 @@ from email.mime import text
 from tkinter.font import nametofont
 from icmplib import ping, multiping, traceroute, resolve, async_multiping
 import tkinter as tk
-from tkinter.constants import ACTIVE, ANCHOR, BOTTOM, DISABLED, END, LEFT, RIGHT, TOP, X
+from tkinter.constants import ACTIVE, ANCHOR, BOTTOM, DISABLED, END, LEFT, RADIOBUTTON, RIGHT, TOP, X
 from typing import Counter, List, final
 from tkinter import Button, Entry, Frame, Image, Label, Listbox, Toplevel, messagebox
 from icmplib.exceptions import NameLookupError
@@ -14,9 +14,11 @@ from email.message import EmailMessage
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from string import Template
-from database import networkcheckDB as db
-import sendMail
+import database
 from snmp import snmp
+from EMail import sendMail
+from Password import hashing
+from database import networkcheckStorageDB
 
 
 class MainWindow:
@@ -251,12 +253,14 @@ class LoginWindow(MainWindow):
         self.topWindow.iconbitmap('asset/Pictures/Network.ico')
         self.bottom = Frame(topWindow)
         self.bottom.pack(side=BOTTOM)
+        self.t3 = Label(
+            topWindow, text="To use the E-Mail function you have to set an E-Mail Account").pack(padx=5, pady=5)
         self.tl = Label(
             topWindow, text="E-Mail Address: ").pack(padx=5, pady=5)
         self.te = Entry(topWindow)
         self.te.pack()
-        self.tl2 = Label(topWindow, text="Name: ").pack(padx=5, pady=5)
-        self.te2 = Entry(topWindow)
+        self.tl2 = Label(topWindow, text="Password: ").pack(padx=5, pady=5)
+        self.te2 = Entry(topWindow, show='*')
         self.te2.pack()
         self.tb2 = Button(self.topWindow, text="Cancel", command=self.close_windows).pack(
             in_=self.bottom, side=LEFT, padx=5, pady=5)
@@ -266,9 +270,11 @@ class LoginWindow(MainWindow):
 
     def setEmailData(self):
         email = self.te.get()
-        name = self.te2.get()
+        password = self.te2.get()
 
-        db.InsertData(name, email, 1)
+        hashedPW = hashing.hashingPW(password)
+
+        networkcheckStorageDB.writeJson(email, hashedPW)
 
     def close_windows(self):
         self.topWindow.destroy()
@@ -288,11 +294,21 @@ class SnmpWindow(MainWindow):
 
 
 def main():
-    root = tk.Tk()
-    root.title("NetworkChecker")
-    root.iconbitmap('asset/Pictures/Network.ico')
-    app = MainWindow(root)
-    root.mainloop()
+
+    if networkcheckStorageDB.readisSet() == False:
+        root = tk.Tk()
+        root.title("NetworkChecker")
+        root.iconbitmap('asset/Pictures/Network.ico')
+        loginW = MainWindow(root)
+        loginW.login_window()
+        root.mainloop()
+
+    else:
+        root = tk.Tk()
+        root.title("NetworkChecker")
+        root.iconbitmap('asset/Pictures/Network.ico')
+        app = MainWindow(root)
+        root.mainloop()
 
 
 if __name__ == '__main__':
