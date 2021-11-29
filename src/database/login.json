@@ -1,7 +1,8 @@
 {
-    "login": "",
-    "password": "",
-    "From": "",
-    "To": "",
-    "isSet": false
+  "login": "",
+  "password": "",
+  "From": "",
+  "To": "",
+  "key": "",
+  "isSet": false
 }

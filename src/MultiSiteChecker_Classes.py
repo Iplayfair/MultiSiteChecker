@@ -17,7 +17,7 @@ from string import Template
 import database
 from snmp import snmp
 from EMail import sendMail
-from Password import hashing
+from Password import endecryption
 from database import networkcheckStorageDB
 
 
@@ -272,9 +272,10 @@ class LoginWindow(MainWindow):
         email = self.te.get()
         password = self.te2.get()
 
-        hashedPW = hashing.hashingPW(password)
+        key = endecryption.generateKey()
+        hashedPW = endecryption.encryptPW(password, key)
 
-        networkcheckStorageDB.writeJson(email, hashedPW)
+        networkcheckStorageDB.writeJson(email, hashedPW, key)
 
     def close_windows(self):
         self.topWindow.destroy()

@@ -2,10 +2,9 @@ import email
 import json
 from json.decoder import JSONDecodeError
 import EMail
-from Password import hashing
 
 
-def writeJson(eMail, password):
+def writeJson(eMail, password, key):
 
     with open('src/database/login.json', 'r') as loginWrite:
 
@@ -14,15 +13,22 @@ def writeJson(eMail, password):
     data["login"] = eMail
     data["password"] = password
     data["From"] = eMail
+    data["key"] = key
     data["isSet"] = True
-
 
     with open('src/database/login.json', 'w') as loginWrite:
         json.dump(data, loginWrite)
 
 
 def readLogin():
-    pass
+
+    with open('src/database/login.json', 'r') as jsonFile:
+
+        data = json.load(jsonFile)
+
+    login = data["login"]
+
+    return login
 
 
 def readPassword():
@@ -30,16 +36,27 @@ def readPassword():
     with open('src/database/login.json', 'r') as jsonFile:
 
         data = json.load(jsonFile)
-    
+
     hashedPW = data["password"]
+
+    return hashedPW
+
+
+def readKey():
+
+    with open('src/database/login.json', 'r') as jsonFile:
+
+        data = json.load(jsonFile)
+
+    key = data["key"]
+    return key
+
 
 def readisSet():
 
     with open('src/database/login.json', 'r') as jsonFile:
 
         data = json.load(jsonFile)
-    
-    isSet = data["isSet"]
-    print(isSet)
-    return isSet
 
+    isSet = data["isSet"]
+    return isSet
