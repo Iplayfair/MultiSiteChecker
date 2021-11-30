@@ -20,6 +20,24 @@ def writeJson(eMail, password, key):
         json.dump(data, loginWrite)
 
 
+
+
+def deleteJson():
+
+    with open('src/database/login.json', 'r') as loginWrite:
+
+        data = json.load(loginWrite)
+
+    data["login"] = ""
+    data["password"] = ""
+    data["From"] = ""
+    data["key"] = ""
+    data["isSet"] = False
+
+    with open('src/database/login.json', 'w') as loginWrite:
+        json.dump(data, loginWrite)
+
+
 def readLogin():
 
     with open('src/database/login.json', 'r') as jsonFile:

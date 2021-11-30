@@ -3,7 +3,7 @@ from email.mime import text
 from tkinter.font import nametofont
 from icmplib import ping, multiping, traceroute, resolve, async_multiping
 import tkinter as tk
-from tkinter.constants import ACTIVE, ANCHOR, BOTTOM, DISABLED, END, LEFT, RADIOBUTTON, RIGHT, TOP, X
+from tkinter.constants import ACTIVE, ANCHOR, BOTTOM, DISABLED, END, INSIDE, LEFT, RADIOBUTTON, RIGHT, TOP, X, YES
 from typing import Counter, List, final
 from tkinter import Button, Entry, Frame, Image, Label, Listbox, Toplevel, messagebox
 from icmplib.exceptions import NameLookupError
@@ -61,7 +61,9 @@ class MainWindow:
         self.b5 = tk.Button(window, text="Set Email",
                             command=self.login_window)
         self.b5.pack(in_=self.bottom, side=BOTTOM, padx=5, pady=5)
-
+        self.b6 = tk.Button(window, text="Delete E-Mail",
+                           command=self.askIf)
+        self.b6.pack(in_=self.bottom, side=BOTTOM, padx=5, pady=5)
         self.lbox = tk.Listbox(window)
 
         self.lbox.bind("<Double-Button-1>", lambda x: self.snmp_window())
@@ -69,6 +71,7 @@ class MainWindow:
         self.hosts = self.init()
 
         for i in self.hosts:
+            self.hosts = []
             self.key = "c" + i
             self.v = "var"+i
             self.dic2[self.v] = tk.IntVar()
@@ -78,6 +81,7 @@ class MainWindow:
             self.lbox.insert("end", i)
 
         self.frame.pack()
+    
 
     def snmp_window(self):
         self.bindex = self.lbox.curselection()
@@ -90,6 +94,14 @@ class MainWindow:
     def login_window(self):
         self.loginWindow = tk.Toplevel(self.window)
         self.app = LoginWindow(self.loginWindow)
+
+    def askIf(self):
+        question = messagebox.askquestion(title=None, message="Are you sure you want delete the Information")
+        if question == "yes":
+            networkcheckStorageDB.deleteJson()
+        else:
+            pass
+
 
     def init(self):
 
@@ -119,13 +131,13 @@ class MainWindow:
 # Check Connection if it is Avaible and if not send Email to Checked Checkbox Connections
 
     def connections_check(self):
-        hosts = []
+        self.hosts = []
         x = -1
         with open("asset/txtData/hosts.txt", "r") as file:
             for line in file:
-                hosts.append(line.strip())
+                self.hosts.append(line.strip())
 
-            for host in hosts:
+            for host in self.hosts:
 
                 try:
 
@@ -151,11 +163,11 @@ class MainWindow:
 
     def connections_add(self):
 
-        hosts = []
+        self.hosts = []
 
         with open("asset/txtData/hosts.txt", "r") as file:
             for line in file:
-                hosts.append(line.strip())
+                self.hosts.append(line.strip())
 
         with open("asset/txtData/hosts.txt", "a") as file:
             try:
@@ -164,7 +176,7 @@ class MainWindow:
 
                 if host.is_alive:
 
-                    if input in hosts:
+                    if input in self.hosts:
                         messagebox.showinfo(
                             title=None, message="The Adress " + input + " is already included.")
                         self.e1.delete(0, 'end')
@@ -203,7 +215,7 @@ class MainWindow:
 # Delete the Connection from List and Array
 
     def connections_delete(self):
-
+        self.hosts = self.init()
         tuple_index = self.lbox.curselection()
         index = sum(tuple_index)
 

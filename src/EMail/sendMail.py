@@ -16,15 +16,17 @@ import time
 def sendEMail(text, address):
     # Configure Office365 SMTP Server
     smtp = smtplib.SMTP(host='smtp.office365.com', port='587')
+    loginName = networkcheckStorageDB.readLogin()
+    loginPW = endecryption.decryptPW()
     smtp.starttls()
-    smtp.login(networkcheckStorageDB.readLogin,
-               endecryption.decryptPW)  # Login Credantials
+    smtp.login(loginName,
+               loginPW)  # Login Credantials
 
     message = text.substitute(IP_ADRESS=address)
 
     msg = MIMEMultipart()
-    msg['FROM'] = networkcheckStorageDB.readLogin
-    msg['TO'] = networkcheckStorageDB.readLogin
+    msg['FROM'] = loginName
+    msg['TO'] = loginName
     msg['Subject'] = "Warning!"
 
     msg.attach(MIMEText(message, 'plain'))

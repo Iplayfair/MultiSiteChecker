@@ -19,6 +19,5 @@ def decryptPW():
     keyMain = networkcheckStorageDB.readKey()
 
     test = cryptocode.decrypt(passwordMain, keyMain)
-    print(test)
 
     return test
