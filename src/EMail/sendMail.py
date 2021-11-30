@@ -17,8 +17,8 @@ def sendEMail(text, address):
     # Configure Office365 SMTP Server
     smtp = smtplib.SMTP(host='smtp.office365.com', port='587')
     smtp.starttls()
-    smtp.login(networkcheckStorageDB.readLogin(),
-               endecryption.decryptPW())  # Login Credantials
+    smtp.login(networkcheckStorageDB.readLogin,
+               endecryption.decryptPW)  # Login Credantials
 
     message = text.substitute(IP_ADRESS=address)
 

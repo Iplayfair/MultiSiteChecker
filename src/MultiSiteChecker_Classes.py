@@ -72,8 +72,9 @@ class MainWindow:
             self.key = "c" + i
             self.v = "var"+i
             self.dic2[self.v] = tk.IntVar()
-            self.dic[self.key] = tk.Checkbutton(window, variable=self.dic2["var"+i]
-                                                ).pack(in_=self.bottom, side=TOP)
+            self.dic[self.key] = tk.Checkbutton(window, variable=self.dic2["var"+i], onvalue=1, offvalue=0
+                                                )
+            self.dic[self.key].pack(in_=self.bottom, side=TOP)
             self.lbox.insert("end", i)
 
         self.frame.pack()
@@ -176,7 +177,8 @@ class MainWindow:
                         self.v = "var"+input
                         self.dic2[self.v] = tk.IntVar()
                         self.dic[self.key] = tk.Checkbutton(
-                            self.window, variable=self.dic2["var"+input], onvalue=1, offvalue=0).pack()
+                            self.window, variable=self.dic2["var"+input], onvalue=1, offvalue=0)
+                        self.dic[self.key].pack(in_=self.bottom, side=TOP)
                         self.e1.delete(0, 'end')
                         self.lbox.insert("end", input)
                         file.write(input + "\n")
@@ -205,7 +207,9 @@ class MainWindow:
         tuple_index = self.lbox.curselection()
         index = sum(tuple_index)
 
+        input = self.lbox.get(index)
         self.lbox.delete(index)
+        self.dic["c" + input].destroy()
 
         with open("asset/txtData/hosts.txt", "r") as f:
             lines = f.readlines()
