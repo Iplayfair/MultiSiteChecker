@@ -307,6 +307,12 @@ class SnmpWindow(MainWindow):
         self.snmpL1.pack()
         self.snmpL2 = Label(snmpWindow, text=str(snmp.getComputerRam(server)))
         self.snmpL2.pack()
+        self.snmpL3 = Label(snmpWindow, text=str(snmp.getComputerUpTime(server)))
+        self.snmpL3.pack()
+        self.snmpL4 = Label(snmpWindow, text=str(snmp.getComputerServices(server)))
+        self.snmpL4.pack()
+        self.snmpL5 = Label(snmpWindow, text=str(snmp.getMACAdress(server)))
+        self.snmpL5.pack()
         self.frame = tk.Frame(self.snmpWindow)
 
 

@@ -1,2 +1,0 @@
-Der ${SERVER_NAME} (${IP_ADRESS}) hat nur noch ${LEFT}GB (${PERCENT}%) freien Speicher!
-
