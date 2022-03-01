@@ -29,7 +29,7 @@ jobs:
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
       - name: Build & push Docker image
-      - uses: mr-smithers-excellent/docker-build-push@v5
+        uses: mr-smithers-excellent/docker-build-push@v5
         with:
           image: romanbrej/testing
           tags: v1, latest
