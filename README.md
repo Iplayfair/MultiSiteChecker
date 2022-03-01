@@ -1,5 +1,5 @@
 # MultiSiteChecker
-This is a MulitSiteChecker were you can add, delete and check the Connectivity of IP-Adresses, FQDNs and Websites.
+This is a MulitSiteChecker were you can add, delete and check the Connectivity of IP-Adresses, FQDNs and Websites...
 
 ![Programm1!](asset/Pictures/Default.png)
 ![Programm2!](asset/Pictures/AllConnections.png)
